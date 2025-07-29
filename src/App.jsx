@@ -44,7 +44,11 @@ const CatalogPage = () => (
 const ContactsPage = () => <div className="contacts-page">Contacts page</div>;
 const ProductPage = () => {
   const params = useParams();
-  const { name, price, amount } = fetchProduct(params.id);
+  const product = fetchProduct(params.id);
+  if (!product) {
+    return <ProductNotFoundPage />;
+  }
+  const { name, price, amount } = product;
   return (
     <div className="product-page">
       <h3>Product</h3>
@@ -54,6 +58,13 @@ const ProductPage = () => {
     </div>
   );
 };
+const ProductNotFoundPage = () => (
+  <div className="product-not-found-page">
+    <h3>Product Not Found</h3>
+    <p>The product you are looking for does not exist or is unavailable.</p>
+  </div>
+);
+const NotFoundPage = () => <div>404 - Page not found</div>;
 
 function App() {
   return (
@@ -78,6 +89,7 @@ function App() {
           <Route path="product/:id" element={<ProductPage />} />
         </Route>
         <Route path="/contacts" element={<ContactsPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
