@@ -85,7 +85,7 @@ const ProductPage = () => {
     setTimeout(() => {
       isLoadingTimeout = true;
       if (!isProductLoaded) {
-        navigate("/product-load-error");
+        navigate("/product-load-error", { replace: true });
       }
     }, LOADING_TIMEOUT + 1000);
     fetchProductById(params.id).then((responce) => {
@@ -95,7 +95,7 @@ const ProductPage = () => {
         isProductLoaded = true;
       }
     });
-  }, [params]);
+  }, [params, navigate]);
 
   if (!product) {
     return <ProductNotFoundPage type={type} />;
