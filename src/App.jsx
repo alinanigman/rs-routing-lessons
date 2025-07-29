@@ -1,4 +1,4 @@
-import { Routes, Route, Link, Outlet, useParams } from "react-router-dom";
+import { Routes, Route, NavLink, Outlet, useParams } from "react-router-dom";
 import styles from "./App.module.css";
 
 const fetchProductsList = [
@@ -34,7 +34,7 @@ const CatalogPage = () => (
     <ul>
       {fetchProductsList.map(({ id, name }) => (
         <li key={id}>
-          <Link to={`product/${id}`}>{name}</Link>
+          <NavLink to={`product/${id}`}>{name}</NavLink>
         </li>
       ))}
     </ul>
@@ -66,6 +66,12 @@ const ProductNotFoundPage = () => (
 );
 const NotFoundPage = () => <div>404 - Page not found</div>;
 
+const ExtendedLink = ({ to, children }) => (
+  <NavLink to={to}>
+    {({ isActive }) => children + (isActive ? "*" : "")}
+  </NavLink>
+);
+
 function App() {
   return (
     <div className={styles.App}>
@@ -73,13 +79,13 @@ function App() {
         <h3>Menu</h3>
         <ul>
           <li>
-            <Link to="/">Main</Link>
+            <ExtendedLink to="/" children="Main" />
           </li>
           <li>
-            <Link to="/catalog">Catalog</Link>
+            <ExtendedLink to="/catalog" children="Catalog" />
           </li>
           <li>
-            <Link to="/contacts">Contacts</Link>
+            <ExtendedLink to="/contacts" children="Contacts" />
           </li>
         </ul>
       </div>
