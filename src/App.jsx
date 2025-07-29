@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Routes,
   Route,
@@ -7,54 +8,81 @@ import {
   useMatch,
 } from "react-router-dom";
 import styles from "./App.module.css";
+import { useEffect } from "react";
 
-const fetchProductsList = [
-  {
-    id: 1,
-    name: "4K Smart TV Samsung 55",
-    price: 749,
-    amount: 6,
-  },
-  {
-    id: 2,
-    name: "iPhone 16 Pro Max 1024GB",
-    price: 999,
-    amount: 9,
-  },
-  {
-    id: 3,
-    name: "Dyson Supersonic Hair Dryer",
-    price: 429,
-    amount: 3,
-  },
-];
-
-const fetchProduct = (id) => {
-  const result = fetchProductsList.find((product) => product.id === Number(id));
-  return result;
+const db = {
+  products: [
+    {
+      id: 1,
+      name: "4K Smart TV Samsung 55",
+      price: 749,
+      amount: 6,
+    },
+    {
+      id: 2,
+      name: "iPhone 16 Pro Max 1024GB",
+      price: 999,
+      amount: 9,
+    },
+    {
+      id: 3,
+      name: "Dyson Supersonic Hair Dryer",
+      price: 429,
+      amount: 3,
+    },
+  ],
 };
 
+const fetchProductsList = () =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(db.products);
+    }, 2500);
+  });
+
+const fetchProductById = (id) =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(db.products.find((product) => product.id === Number(id)));
+    }, 500);
+  });
+
 const MainPage = () => <div className="main-page">Main page</div>;
-const CatalogPage = () => (
-  <div className="catalog-page">
-    <h3>Catalog</h3>
-    <ul>
-      {fetchProductsList.map(({ id, name }) => (
-        <li key={id}>
-          <NavLink to={`product/${id}`}>{name}</NavLink>
-        </li>
-      ))}
-    </ul>
-    <Outlet />
-  </div>
-);
+const CatalogPage = () => {
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    fetchProductsList().then((responce) => setList(responce));
+  }, []);
+  return (
+    <div className="catalog-page">
+      <h3>Catalog</h3>
+      <ul>
+        {list.map(({ id, name }) => (
+          <li key={id}>
+            <NavLink to={`product/${id}`}>{name}</NavLink>
+          </li>
+        ))}
+      </ul>
+      <Outlet />
+    </div>
+  );
+};
 const ContactsPage = () => <div className="contacts-page">Contacts page</div>;
+
 const ProductPage = () => {
+  const [product, setProduct] = useState({});
   const params = useParams();
   const match = useMatch("/catalog/:type/:id");
   console.log("match ", match.params.type);
   const type = match?.params?.type ?? "";
-  const product = fetchProduct(params.id);
+
+  useEffect(() => {
+    fetchProductById(params.id).then((responce) => {
+      console.log("responce: ", responce);
+      setProduct(responce);
+    });
+  }, [params]);
+
   if (!product) {
     return <ProductNotFoundPage type={type} />;
   }
