@@ -10,6 +10,7 @@ import {
 import styles from "./App.module.css";
 import { useEffect } from "react";
 
+const LOADING_TIMEOUT = 2000;
 const db = {
   products: [
     {
@@ -37,14 +38,14 @@ const fetchProductsList = () =>
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(db.products);
-    }, 2500);
+    }, LOADING_TIMEOUT);
   });
 
 const fetchProductById = (id) =>
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(db.products.find((product) => product.id === Number(id)));
-    }, 500);
+    }, LOADING_TIMEOUT);
   });
 
 const MainPage = () => <div className="main-page">Main page</div>;
