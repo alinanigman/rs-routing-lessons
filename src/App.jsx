@@ -7,6 +7,7 @@ import {
   useParams,
   useMatch,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
 import styles from "./App.module.css";
 import { useEffect } from "react";
@@ -153,7 +154,8 @@ function App() {
         </Route>
         <Route path="/product-load-error" element={<ProductLoadErrorPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/404" element={<NotFoundPage />} />
+        <Route path="*" element={<Navigate to="/404" replace={true} />} />
       </Routes>
     </div>
   );
