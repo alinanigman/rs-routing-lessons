@@ -6,6 +6,7 @@ import {
   Outlet,
   useParams,
   useMatch,
+  useNavigate,
 } from "react-router-dom";
 import styles from "./App.module.css";
 import { useEffect } from "react";
@@ -76,11 +77,23 @@ const ProductPage = () => {
   const match = useMatch("/catalog/:type/:id");
   console.log("match ", match.params.type);
   const type = match?.params?.type ?? "";
+  const navigate = useNavigate();
 
   useEffect(() => {
+    let isLoadingTimeout = false;
+    let isProductLoaded = false;
+    setTimeout(() => {
+      isLoadingTimeout = true;
+      if (!isProductLoaded) {
+        navigate("/product-load-error");
+      }
+    }, LOADING_TIMEOUT + 1000);
     fetchProductById(params.id).then((responce) => {
-      console.log("responce: ", responce);
-      setProduct(responce);
+      if (!isLoadingTimeout) {
+        console.log("responce: ", responce);
+        setProduct(responce);
+        isProductLoaded = true;
+      }
     });
   }, [params]);
 
@@ -106,6 +119,7 @@ const ProductNotFoundPage = ({ type }) => (
     </p>
   </div>
 );
+const ProductLoadErrorPage = () => <div>Product load error</div>;
 const NotFoundPage = () => <div>404 - Page not found</div>;
 
 const ExtendedLink = ({ to, children }) => (
@@ -137,6 +151,7 @@ function App() {
           <Route path="product/:id" element={<ProductPage />} />
           <Route path="service/:id" element={<ProductPage />} />
         </Route>
+        <Route path="/product-load-error" element={<ProductLoadErrorPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
