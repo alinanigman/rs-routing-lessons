@@ -1,4 +1,11 @@
-import { Routes, Route, NavLink, Outlet, useParams } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  NavLink,
+  Outlet,
+  useParams,
+  useMatch,
+} from "react-router-dom";
 import styles from "./App.module.css";
 
 const fetchProductsList = [
@@ -44,9 +51,12 @@ const CatalogPage = () => (
 const ContactsPage = () => <div className="contacts-page">Contacts page</div>;
 const ProductPage = () => {
   const params = useParams();
+  const match = useMatch("/catalog/:type/:id");
+  console.log("match ", match.params.type);
+  const type = match?.params?.type ?? "";
   const product = fetchProduct(params.id);
   if (!product) {
-    return <ProductNotFoundPage />;
+    return <ProductNotFoundPage type={type} />;
   }
   const { name, price, amount } = product;
   return (
@@ -58,10 +68,13 @@ const ProductPage = () => {
     </div>
   );
 };
-const ProductNotFoundPage = () => (
+const ProductNotFoundPage = ({ type }) => (
   <div className="product-not-found-page">
-    <h3>Product Not Found</h3>
-    <p>The product you are looking for does not exist or is unavailable.</p>
+    <h3>{type === "service" ? "Service" : "Product"} Not Found</h3>
+    <p>
+      The {type === "service" ? "service" : "product"} you are looking for does
+      not exist or is unavailable.
+    </p>
   </div>
 );
 const NotFoundPage = () => <div>404 - Page not found</div>;
@@ -93,6 +106,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/catalog" element={<CatalogPage />}>
           <Route path="product/:id" element={<ProductPage />} />
+          <Route path="service/:id" element={<ProductPage />} />
         </Route>
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="*" element={<NotFoundPage />} />
